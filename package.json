@@ -16,7 +16,10 @@
     "start:http": "node build/cli.js http",
     "start:debug": "node build/cli.js stdio --debug",
     "start:http-debug": "node build/cli.js http --debug",
-    "clean": "rmdir /s /q build || rm -rf build"
+    "clean": "rmdir /s /q build || rm -rf build",
+    "prepublishOnly": "npm run build",
+    "version": "npm run build && git add -A",
+    "postversion": "git push && git push --tags"
   },
   "keywords": [
     "mcp",
@@ -24,10 +27,25 @@
     "console",
     "terminal",
     "process",
-    "execution"
+    "execution",
+    "ai-agent",
+    "vscode",
+    "automation",
+    "shell",
+    "powershell",
+    "cmd",
+    "bash"
   ],
   "author": "Developer",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lihongjie0209/console-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lihongjie0209/console-mcp-server/issues"
+  },
+  "homepage": "https://github.com/lihongjie0209/console-mcp-server#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "commander": "^14.0.0",

@@ -1,0 +1,82 @@
+name: Publish to NPM
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        registry-url: 'https://registry.npmjs.org'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Extract version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    - name: Update package.json version
+      run: npm version ${{ steps.get_version.outputs.VERSION }} --no-git-tag-version
+      
+    - name: Check if version exists on NPM
+      id: check_version
+      run: |
+        PACKAGE_NAME=$(node -p "require('./package.json').name")
+        VERSION=${{ steps.get_version.outputs.VERSION }}
+        
+        # Check if version exists
+        if npm view "$PACKAGE_NAME@$VERSION" version 2>/dev/null; then
+          echo "Version $VERSION already exists on NPM"
+          echo "EXISTS=true" >> $GITHUB_OUTPUT
+        else
+          echo "Version $VERSION does not exist on NPM"
+          echo "EXISTS=false" >> $GITHUB_OUTPUT
+        fi
+      
+    - name: Publish to NPM
+      if: steps.check_version.outputs.EXISTS == 'false'
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
+    - name: Skip publishing
+      if: steps.check_version.outputs.EXISTS == 'true'
+      run: |
+        echo "Skipping NPM publish: Version ${{ steps.get_version.outputs.VERSION }} already exists"
+        
+    - name: Create GitHub Release
+      if: steps.check_version.outputs.EXISTS == 'false'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        body: |
+          ## Console MCP Server v${{ steps.get_version.outputs.VERSION }}
+          
+          Automated release created from tag v${{ steps.get_version.outputs.VERSION }}
+          
+          ### Installation
+          ```bash
+          npm install -g console-mcp-server@${{ steps.get_version.outputs.VERSION }}
+          ```
+          
+          ### Changes
+          See [CHANGELOG.md](CHANGELOG.md) for detailed changes.
+        draft: false
+        prerelease: false
