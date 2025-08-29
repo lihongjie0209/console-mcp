@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "console-mcp-server": {
+      "command": "npx",
+      "args": ["console-mcp-server", "stdio"],
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "name": "console-mcp-server",
+  "version": "1.0.0",
+  "description": "TypeScript MCP server for console management with process execution and async operations",
+  "type": "module",
+  "main": "build/cli.js",
+  "bin": {
+    "console-mcp-server": "./build/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:unix": "tsc && chmod +x build/cli.js",
+    "dev": "tsc --watch",
+    "start": "node build/cli.js",
+    "start:stdio": "node build/cli.js stdio",
+    "start:http": "node build/cli.js http",
+    "start:debug": "node build/cli.js stdio --debug",
+    "start:http-debug": "node build/cli.js http --debug",
+    "clean": "rmdir /s /q build || rm -rf build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "console",
+    "terminal",
+    "process",
+    "execution"
+  ],
+  "author": "Developer",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "commander": "^14.0.0",
+    "express": "^4.21.2",
+    "uuid": "^9.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.23",
+    "@types/node": "^20.0.0",
+    "@types/uuid": "^9.0.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "build"
+  ]
+}
