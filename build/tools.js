@@ -228,11 +228,12 @@ export function createTools(consoleManager) {
                 shell: z.string().optional().describe("Shell to use (default: system default)"),
                 workingDir: z.string().optional().describe("Working directory for the console"),
                 environment: z.record(z.string()).optional().describe("Environment variables"),
-                name: z.string().optional().describe("Optional name for the console (for easier reference)")
+                name: z.string().optional().describe("Optional name for the console (for easier reference)"),
+                encoding: z.string().optional().describe("Character encoding to use (default: utf-8). Supported: utf-8, gbk")
             },
-            handler: async ({ shell, workingDir, environment, name }) => {
+            handler: async ({ shell, workingDir, environment, name, encoding }) => {
                 try {
-                    const consoleResult = await consoleManager.createConsole(shell, workingDir, environment, name);
+                    const consoleResult = await consoleManager.createConsole(shell, workingDir, environment, name, encoding);
                     let resultText = `Console created successfully:\n`;
                     resultText += `ID: ${consoleResult.id}\n`;
                     if (consoleResult.name) {
@@ -240,6 +241,7 @@ export function createTools(consoleManager) {
                     }
                     resultText += `Shell: ${consoleResult.shell}\n`;
                     resultText += `Working Directory: ${consoleResult.workingDir}\n`;
+                    resultText += `Encoding: ${consoleResult.encoding}\n`;
                     resultText += `Created: ${consoleResult.createdAt.toISOString()}\n`;
                     resultText += `Status: ${consoleResult.isActive ? 'Active' : 'Inactive'}`;
                     if (consoleResult.environment && Object.keys(consoleResult.environment).length > 0) {

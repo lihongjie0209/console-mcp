@@ -5,6 +5,7 @@
 ## 功能特性
 
 - **控制台会话管理**: 创建、列出、关闭控制台会话
+- **字符编码支持**: 支持UTF-8、GBK等编码，默认UTF-8
 - **同步命令执行**: 立即执行命令并返回结果
 - **异步命令执行**: 后台执行长时间运行的命令
 - **结果查询**: 通过执行ID查询异步命令的运行状态和结果
@@ -194,8 +195,9 @@ HTTP模式运行后，服务器将提供以下端点：
 - `workingDir` (可选): 控制台的工作目录
 - `environment` (可选): 环境变量键值对
 - `name` (可选): 控制台的名称，便于后续引用
+- `encoding` (可选): 字符编码 (默认: utf-8，支持: utf-8, gbk)
 
-**返回**: 控制台ID (如果提供了name，也会返回name)
+**返回**: 控制台ID、编码等详细信息 (如果提供了name，也会返回name)
 
 ### 2. execute_sync
 同步执行命令并立即返回结果。
@@ -293,6 +295,32 @@ Agent: list_consoles()
 - web-server (运行开发服务器)
 - dev-work (开发任务控制台)  
 - build-tasks (构建监控)
+```
+
+### 字符编码支持示例
+
+Console MCP Server 支持多种字符编码，特别适用于处理多语言环境：
+
+```bash
+# 1. 创建UTF-8编码的控制台 (默认)
+Agent: create_console(name="utf8-console", encoding="utf-8")
+返回: 控制台创建成功，编码: utf-8
+
+# 2. 创建GBK编码的控制台 (适用于中文Windows环境)
+Agent: create_console(shell="cmd", name="gbk-console", encoding="gbk")
+返回: 控制台创建成功，编码: gbk
+
+# 3. 在UTF-8控制台中处理Unicode字符
+Agent: execute_sync(console="utf8-console", command="echo Hello 🌟 World")
+返回: Hello 🌟 World
+
+# 4. 在GBK控制台中处理中文字符
+Agent: execute_sync(console="gbk-console", command="echo 你好世界")
+返回: 你好世界
+
+# 5. PowerShell UTF-8设置
+Agent: create_console(shell="pwsh", name="ps-utf8", encoding="utf-8")
+# 自动设置PowerShell输出编码为UTF-8
 ```
 
 ### 基本工作流程

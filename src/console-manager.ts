@@ -67,6 +67,7 @@ export interface ConsoleCreationResult {
   createdAt: Date;
   isActive: boolean;
   environment?: Record<string, string>;
+  encoding?: string;
 }
 
 export class ConsoleManager {
@@ -86,7 +87,8 @@ export class ConsoleManager {
     shell?: string, 
     workingDir?: string, 
     environment?: Record<string, string>,
-    name?: string
+    name?: string,
+    encoding?: string
   ): Promise<ConsoleCreationResult> {
     const consoleId = uuidv4();
     
@@ -102,12 +104,18 @@ export class ConsoleManager {
     // 确定工作目录
     const selectedWorkingDir = workingDir || process.cwd();
     
+    // 设置默认编码为 utf-8
+    const selectedEncoding = encoding || 'utf-8';
+    
     // 准备环境变量
     const env = { ...process.env, ...environment };
     
+    // 获取shell初始化参数（包含编码设置）
+    const shellArgs = this.getShellInitArgs(selectedShell, selectedEncoding);
+    
     try {
       // 创建子进程
-      const childProcess = spawn(selectedShell, [], {
+      const childProcess = spawn(selectedShell, shellArgs, {
         cwd: selectedWorkingDir,
         env: env,
         stdio: ['pipe', 'pipe', 'pipe']
@@ -166,7 +174,8 @@ export class ConsoleManager {
         workingDir: selectedWorkingDir,
         createdAt: session.createdAt,
         isActive: true,
-        environment
+        environment,
+        encoding: selectedEncoding
       };
     } catch (error) {
       throw new Error(`Failed to create console: ${error instanceof Error ? error.message : String(error)}`);
@@ -506,6 +515,34 @@ export class ConsoleManager {
     } else {
       // Unix-like shells (bash, zsh, sh, etc.)
       return ['-c', command];
+    }
+  }
+
+  /**
+   * 获取shell初始化参数（包含编码设置）
+   */
+  private getShellInitArgs(shell: string, encoding: string): string[] {
+    const shellLower = shell.toLowerCase();
+    
+    if (shellLower.includes('cmd.exe') || shellLower.includes('cmd')) {
+      // CMD: 设置代码页
+      if (encoding.toLowerCase() === 'utf-8' || encoding.toLowerCase() === 'utf8') {
+        return ['/k', 'chcp 65001 >nul && echo Console ready'];
+      } else if (encoding.toLowerCase() === 'gbk') {
+        return ['/k', 'chcp 936 >nul && echo Console ready'];
+      } else {
+        return ['/k', 'echo Console ready'];
+      }
+    } else if (shellLower.includes('powershell') || shellLower.includes('pwsh')) {
+      // PowerShell: 使用 -NoExit 保持会话，并在启动时设置编码
+      if (encoding.toLowerCase() === 'utf-8' || encoding.toLowerCase() === 'utf8') {
+        return ['-NoExit', '-Command', '[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; Write-Host "Console ready"'];
+      } else {
+        return ['-NoExit', '-Command', 'Write-Host "Console ready"'];
+      }
+    } else {
+      // Unix-like shells: 设置LANG环境变量
+      return [];
     }
   }
 

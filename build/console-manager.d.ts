@@ -52,6 +52,7 @@ export interface ConsoleCreationResult {
     createdAt: Date;
     isActive: boolean;
     environment?: Record<string, string>;
+    encoding?: string;
 }
 export declare class ConsoleManager {
     private consoles;
@@ -62,7 +63,7 @@ export declare class ConsoleManager {
     /**
      * 创建新的控制台会话
      */
-    createConsole(shell?: string, workingDir?: string, environment?: Record<string, string>, name?: string): Promise<ConsoleCreationResult>;
+    createConsole(shell?: string, workingDir?: string, environment?: Record<string, string>, name?: string, encoding?: string): Promise<ConsoleCreationResult>;
     /**
      * 解析控制台ID（支持通过name或id查找）
      */
@@ -107,6 +108,10 @@ export declare class ConsoleManager {
      * 获取shell执行命令的参数
      */
     private getShellArgs;
+    /**
+     * 获取shell初始化参数（包含编码设置）
+     */
+    private getShellInitArgs;
     /**
      * 添加输出到缓冲区
      */
