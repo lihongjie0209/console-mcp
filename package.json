@@ -1,11 +1,11 @@
 {
-  "name": "console-mcp-server",
+  "name": "console-mcp",
   "version": "1.0.0",
   "description": "TypeScript MCP server for console management with process execution and async operations",
   "type": "module",
   "main": "build/cli.js",
   "bin": {
-    "console-mcp-server": "./build/cli.js"
+    "console-mcp": "./build/cli.js"
   },
   "scripts": {
     "build": "tsc",

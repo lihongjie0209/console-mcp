@@ -5,6 +5,11 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -69,12 +74,10 @@ jobs:
         
     - name: Create GitHub Release
       if: steps.check_version.outputs.EXISTS == 'false'
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: ncipollo/release-action@v1
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        tag: ${{ github.ref_name }}
+        name: Release ${{ steps.get_version.outputs.VERSION }}
         body: |
           ## Console MCP Server v${{ steps.get_version.outputs.VERSION }}
           
@@ -82,10 +85,11 @@ jobs:
           
           ### Installation
           ```bash
-          npm install -g console-mcp-server@${{ steps.get_version.outputs.VERSION }}
+          npm install -g console-mcp@${{ steps.get_version.outputs.VERSION }}
           ```
           
           ### Changes
           See [CHANGELOG.md](CHANGELOG.md) for detailed changes.
         draft: false
         prerelease: false
+        token: ${{ secrets.GITHUB_TOKEN }}

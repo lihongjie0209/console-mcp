@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2025-08-29
 
 ### Added
-- Initial release of Console MCP Server
+- Initial release of Console MCP Server (published as `console-mcp` on NPM)
 - TypeScript MCP server for console management
 - Support for multiple persistent console sessions
 - Synchronous and asynchronous command execution

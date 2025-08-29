@@ -2,6 +2,12 @@
 
 This document outlines how to create releases for the Console MCP Server.
 
+## Package Information
+
+- **NPM Package Name**: `console-mcp`
+- **GitHub Repository**: `console-mcp`
+- **CLI Command**: `console-mcp` (after global install)
+
 ## Automated Release Process
 
 The project uses GitHub Actions to automatically publish to NPM when tags are created.
