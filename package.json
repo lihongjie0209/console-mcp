@@ -40,12 +40,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lihongjie0209/console-mcp-server.git"
+    "url": "https://github.com/lihongjie0209/console-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/lihongjie0209/console-mcp-server/issues"
+    "url": "https://github.com/lihongjie0209/console-mcp/issues"
   },
-  "homepage": "https://github.com/lihongjie0209/console-mcp-server#readme",
+  "homepage": "https://github.com/lihongjie0209/console-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "commander": "^14.0.0",
