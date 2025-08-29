@@ -30,7 +30,16 @@ jobs:
       run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
       
     - name: Update package.json version
-      run: npm version ${{ steps.get_version.outputs.VERSION }} --no-git-tag-version
+      run: |
+        CURRENT_VERSION=$(node -p "require('./package.json').version")
+        TARGET_VERSION=${{ steps.get_version.outputs.VERSION }}
+        
+        if [ "$CURRENT_VERSION" != "$TARGET_VERSION" ]; then
+          npm version $TARGET_VERSION --no-git-tag-version
+          echo "Updated version from $CURRENT_VERSION to $TARGET_VERSION"
+        else
+          echo "Version is already $TARGET_VERSION, no update needed"
+        fi
       
     - name: Check if version exists on NPM
       id: check_version
